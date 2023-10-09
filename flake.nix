@@ -23,14 +23,23 @@
       ];
       systems = [ "x86_64-linux" "i686-linux" "x86_64-darwin" "aarch64-linux" "aarch64-darwin" ];
 
-      perSystem = { config, self', inputs', pkgs, system, ... }: {
-        packages.default = pkgs.callPackage ./default.nix { };
-
+      perSystem = { config, self', inputs', pkgs, system, ... }: rec {
         _module.args.pkgs = import inputs.nixpkgs {
           inherit system;
           overlays = [
             inputs.gomod2nix.overlays.default
           ];
+        };
+
+        packages.default = packages.tele2aria;
+        packages.tele2aria = pkgs.callPackage ./default.nix { };
+        packages.container = pkgs.callPackage ./container.nix {
+          pkgsLinux = import inputs.nixpkgs {
+            system = "x86_64-linux";
+            overlays = [
+              inputs.gomod2nix.overlays.default
+            ];
+          };
         };
 
         devenv.shells.default = {
@@ -44,6 +53,11 @@
             gomod2nix
             (mkGoEnv { pwd = ./.; })
           ];
+
+          scripts."build-container".exec = ''
+            nix build --builders "$NIX_BUILDERS" .#container
+            podman load < result
+          '';
         };
 
       };

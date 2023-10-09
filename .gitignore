@@ -1,6 +1,7 @@
 tmp
 .env
 .tdlib
+result
 .direnv
 .devenv
 
