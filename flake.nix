@@ -7,6 +7,8 @@
     nix2container.url = "github:nlewo/nix2container";
     nix2container.inputs.nixpkgs.follows = "nixpkgs";
     mk-shell-bin.url = "github:rrbutani/nix-mk-shell-bin";
+    gomod2nix.url = "github:nix-community/gomod2nix/v1.5.0";
+    gomod2nix.inputs.nixpkgs.follows = "nixpkgs";
   };
 
   nixConfig = {
@@ -22,16 +24,25 @@
       systems = [ "x86_64-linux" "i686-linux" "x86_64-darwin" "aarch64-linux" "aarch64-darwin" ];
 
       perSystem = { config, self', inputs', pkgs, system, ... }: {
-        packages.default = pkgs.hello;
+        packages.default = pkgs.callPackage ./default.nix { };
+
+        _module.args.pkgs = import inputs.nixpkgs {
+          inherit system;
+          overlays = [
+            inputs.gomod2nix.overlays.default
+          ];
+        };
 
         devenv.shells.default = {
+          dotenv.enable = true;
           languages.go.enable = true;
 
-          packages = [
-            pkgs.air
-            pkgs.tdlib
-            pkgs.openssl
-            config.packages.default
+          packages = with pkgs; [
+            air
+            tdlib
+            openssl
+            gomod2nix
+            (mkGoEnv { pwd = ./.; })
           ];
         };
 

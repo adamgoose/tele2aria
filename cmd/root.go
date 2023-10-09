@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"fmt"
 	"log"
 
 	"github.com/adamgoose/tele2aria/lib"
@@ -8,10 +9,14 @@ import (
 	"github.com/zelenin/go-tdlib/client"
 )
 
+var Version = "development"
+
 var rootCmd = &cobra.Command{
-	Use:   "tele2aria",
-	Short: "tele2aria is a simple Telegram bot that sends attachments to Aria2",
+	Use:     "tele2aria",
+	Version: Version,
+	Short:   "tele2aria is a simple Telegram bot that sends attachments to Aria2",
 	RunE: lib.RunE(func(tdlibClient *client.Client) error {
+		fmt.Printf("tele2aria %s\n", Version)
 		me, err := tdlibClient.GetMe()
 		if err != nil {
 			return err

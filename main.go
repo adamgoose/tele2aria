@@ -30,8 +30,8 @@ func main() {
 				ApiHash:                viper.GetString("TELEGRAM_API_HASH"),
 				SystemLanguageCode:     "en",
 				DeviceModel:            "Server",
-				SystemVersion:          "1.0.0",
-				ApplicationVersion:     "1.0.0",
+				SystemVersion:          cmd.Version,
+				ApplicationVersion:     cmd.Version,
 				EnableStorageOptimizer: true,
 				IgnoreFileNames:        false,
 			}
