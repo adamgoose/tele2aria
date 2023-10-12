@@ -1,4 +1,5 @@
 builds:
   include:
     # build for every system
-    - 'packages.*.tele2aria'
+    - 'packages.x86_64-linux.tele2aria'
+    - 'packages.x86_64-linux.container'
